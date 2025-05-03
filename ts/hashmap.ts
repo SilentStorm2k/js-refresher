@@ -74,9 +74,7 @@ function HashMap<V>(loadFactor: number = 0.75) {
 		return false;
 	}
 	function length(): number {
-		let len = 0;
-		for (let i = 0; i < capacity; i++) len += keyBuckets[i].size();
-		return len;
+		return size;
 	}
 	function clear(): void {
 		keyBuckets = [];
@@ -161,6 +159,7 @@ function test() {
 	test.set("kite", "pink");
 	test.set("lion", "golden");
 
+	console.log(test.length());
 	console.log(test.keys());
 	console.log(test.values());
 	console.log(test.entries());
@@ -179,6 +178,7 @@ function test() {
 	console.log(test.remove("kite"));
 	console.log(test.entries());
 	console.log(test.print());
+	console.log(test.length());
 	test.clear();
 
 	test.set("ice cream", "white");
@@ -190,6 +190,7 @@ function test() {
 	test.set("lion", "black");
 	console.log(test.has("lion"), test.get("lion"));
 	test.print();
+	console.log(test.length());
 }
 
-// test();
+test();
