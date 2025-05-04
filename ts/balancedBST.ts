@@ -91,6 +91,32 @@ class Tree<T> {
 		let cur = this.root;
 		this.postOrderDfs(cur, cb);
 	}
+	depth(val: T) {
+		let depth = 0;
+		let cur = this.root;
+		while (cur && this.comparator(cur.data, val) != 0) {
+			if (this.comparator(cur.data, val) > 0) cur = cur.left;
+			else cur = cur.right;
+			depth += 1;
+		}
+		if (cur && this.comparator(cur.data, val) == 0) return depth;
+		return null;
+	}
+	height(val: T) {
+		let cur = this.find(val);
+		if (!cur) return null;
+		return this.getHeight(cur, 0) - 1;
+	}
+	private getHeight(cur, height) {
+		if (!cur) return height;
+		return (
+			1 +
+			Math.max(
+				this.getHeight(cur.left, height),
+				this.getHeight(cur.right, height)
+			)
+		);
+	}
 	private deleteNode(prev, cur) {
 		// node to be deleted has 2 children
 		if (cur.right && cur.left)
@@ -114,19 +140,18 @@ class Tree<T> {
 		}
 	}
 
-	private deleteSmallest(parent, cur) {
+	private deleteSmallest(prev, cur) {
 		while (cur.left) {
-			parent = cur;
+			prev = cur;
 			cur = cur.left;
 		}
 		const smallest = cur.data;
 		if (this.isLeaf(cur)) {
-			if (this.comparator(parent.data, cur.data) > 0) parent.left = null;
-			else parent.right = null;
+			if (this.comparator(prev.data, cur.data) > 0) prev.left = null;
+			else prev.right = null;
 		} else {
-			if (this.comparator(parent.data, cur.data) > 0)
-				parent.left = cur.right;
-			else parent.right = cur.right;
+			if (this.comparator(prev.data, cur.data) > 0) prev.left = cur.right;
+			else prev.right = cur.right;
 		}
 		return smallest;
 	}
@@ -240,6 +265,11 @@ res = [];
 newTree.postOrder((ele) => res.push(ele));
 console.log("POSTORDER", res);
 
+console.log("Height of 4", newTree.height(4));
+console.log("Height of 5", newTree.height(5));
+console.log("Height of 2", newTree.height(2));
+console.log("Height of unknown", newTree.height(99));
+
 console.log("deleting 4", newTree.delete(4));
 newTree.prettyPrint(newTree.root);
 
@@ -248,6 +278,11 @@ newTree.prettyPrint(newTree.root);
 
 console.log("deleting 2", newTree.delete(2));
 newTree.prettyPrint(newTree.root);
+
+console.log("Height of 6", newTree.height(6));
+console.log("Depth of 6", newTree.depth(6));
+console.log("Depth of 7", newTree.depth(7));
+console.log("Depth of 1", newTree.depth(1));
 
 console.log(newTree.find(3));
 newTree.levelOrder((ele) => console.log(ele));

@@ -115,6 +115,32 @@ var Tree = /** @class */ (function () {
         var cur = this.root;
         this.postOrderDfs(cur, cb);
     };
+    Tree.prototype.depth = function (val) {
+        var depth = 0;
+        var cur = this.root;
+        while (cur && this.comparator(cur.data, val) != 0) {
+            if (this.comparator(cur.data, val) > 0)
+                cur = cur.left;
+            else
+                cur = cur.right;
+            depth += 1;
+        }
+        if (cur && this.comparator(cur.data, val) == 0)
+            return depth;
+        return null;
+    };
+    Tree.prototype.height = function (val) {
+        var cur = this.find(val);
+        if (!cur)
+            return null;
+        return this.getHeight(cur, 0) - 1;
+    };
+    Tree.prototype.getHeight = function (cur, height) {
+        if (!cur)
+            return height;
+        return (1 +
+            Math.max(this.getHeight(cur.left, height), this.getHeight(cur.right, height)));
+    };
     Tree.prototype.deleteNode = function (prev, cur) {
         // node to be deleted has 2 children
         if (cur.right && cur.left)
@@ -142,23 +168,23 @@ var Tree = /** @class */ (function () {
             }
         }
     };
-    Tree.prototype.deleteSmallest = function (parent, cur) {
+    Tree.prototype.deleteSmallest = function (prev, cur) {
         while (cur.left) {
-            parent = cur;
+            prev = cur;
             cur = cur.left;
         }
         var smallest = cur.data;
         if (this.isLeaf(cur)) {
-            if (this.comparator(parent.data, cur.data) > 0)
-                parent.left = null;
+            if (this.comparator(prev.data, cur.data) > 0)
+                prev.left = null;
             else
-                parent.right = null;
+                prev.right = null;
         }
         else {
-            if (this.comparator(parent.data, cur.data) > 0)
-                parent.left = cur.right;
+            if (this.comparator(prev.data, cur.data) > 0)
+                prev.left = cur.right;
             else
-                parent.right = cur.right;
+                prev.right = cur.right;
         }
         return smallest;
     };
@@ -244,11 +270,19 @@ console.log("PREORDER", res);
 res = [];
 newTree.postOrder(function (ele) { return res.push(ele); });
 console.log("POSTORDER", res);
+console.log("Height of 4", newTree.height(4));
+console.log("Height of 5", newTree.height(5));
+console.log("Height of 2", newTree.height(2));
+console.log("Height of unknown", newTree.height(99));
 console.log("deleting 4", newTree["delete"](4));
 newTree.prettyPrint(newTree.root);
 console.log("deleting 5", newTree["delete"](5));
 newTree.prettyPrint(newTree.root);
 console.log("deleting 2", newTree["delete"](2));
 newTree.prettyPrint(newTree.root);
+console.log("Height of 6", newTree.height(6));
+console.log("Depth of 6", newTree.depth(6));
+console.log("Depth of 7", newTree.depth(7));
+console.log("Depth of 1", newTree.depth(1));
 console.log(newTree.find(3));
 newTree.levelOrder(function (ele) { return console.log(ele); });
