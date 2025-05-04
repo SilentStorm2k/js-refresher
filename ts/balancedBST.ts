@@ -69,7 +69,28 @@ class Tree<T> {
 		if (cur && cur.data == value) return cur;
 		else return null;
 	}
-	levelOrder(cb: (node) => void) {}
+	levelOrder(cb: (val: T) => void) {
+		let q = new Queue<TreeNode<T>>();
+		if (this.root) q.push(this.root);
+		while (!q.isEmpty()) {
+			const node = q.pop();
+			if (node) cb(node.data);
+			if (node?.left) q.push(node.left);
+			if (node?.right) q.push(node.right);
+		}
+	}
+	inOrder(cb: (val: T) => void) {
+		let cur = this.root;
+		this.inOrderDfs(cur, cb);
+	}
+	preOrder(cb: (val: T) => void) {
+		let cur = this.root;
+		this.preOrderDfs(cur, cb);
+	}
+	postOrder(cb: (val: T) => void) {
+		let cur = this.root;
+		this.postOrderDfs(cur, cb);
+	}
 	private deleteNode(prev, cur) {
 		// node to be deleted has 2 children
 		if (cur.right && cur.left)
@@ -110,6 +131,25 @@ class Tree<T> {
 		return smallest;
 	}
 
+	private inOrderDfs(cur, cb: (val: T) => void) {
+		if (!cur) return;
+		this.inOrderDfs(cur.left, cb);
+		cb(cur.data);
+		this.inOrderDfs(cur.right, cb);
+	}
+	private preOrderDfs(cur, cb: (val: T) => void) {
+		if (!cur) return;
+		cb(cur.data);
+		this.preOrderDfs(cur.left, cb);
+		this.preOrderDfs(cur.right, cb);
+	}
+	private postOrderDfs(cur, cb: (val: T) => void) {
+		if (!cur) return;
+		this.postOrderDfs(cur.left, cb);
+		this.postOrderDfs(cur.right, cb);
+		cb(cur.data);
+	}
+
 	private isLeaf(node) {
 		return !node.left && !node.right;
 	}
@@ -134,6 +174,19 @@ class Tree<T> {
 			);
 		}
 	};
+}
+
+class Queue<T> {
+	private elements: T[] = [];
+	push(element: T) {
+		this.elements.push(element);
+	}
+	pop(): T | null {
+		return this.elements.shift() ?? null;
+	}
+	isEmpty() {
+		return this.elements.length == 0;
+	}
 }
 
 export {};
@@ -174,6 +227,18 @@ newTree.prettyPrint(newTree.root);
 console.log("Rebuilding Tree:");
 newTree = new Tree(arr, (a, b) => a - b);
 newTree.prettyPrint(newTree.root);
+let res: number[] = [];
+newTree.levelOrder((ele) => res.push(ele));
+console.log("LEVEL ORDER", res);
+res = [];
+newTree.inOrder((ele) => res.push(ele));
+console.log("INORDER", res);
+res = [];
+newTree.preOrder((ele) => res.push(ele));
+console.log("PREORDER", res);
+res = [];
+newTree.postOrder((ele) => res.push(ele));
+console.log("POSTORDER", res);
 
 console.log("deleting 4", newTree.delete(4));
 newTree.prettyPrint(newTree.root);
@@ -185,3 +250,4 @@ console.log("deleting 2", newTree.delete(2));
 newTree.prettyPrint(newTree.root);
 
 console.log(newTree.find(3));
+newTree.levelOrder((ele) => console.log(ele));

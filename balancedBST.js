@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var TreeNode = /** @class */ (function () {
     function TreeNode(data, left, right) {
         this.data = data;
@@ -59,7 +59,7 @@ var Tree = /** @class */ (function () {
             }
         }
     };
-    Tree.prototype.delete = function (data) {
+    Tree.prototype["delete"] = function (data) {
         var cur = this.root;
         var prev = null;
         while (cur) {
@@ -88,6 +88,32 @@ var Tree = /** @class */ (function () {
             return cur;
         else
             return null;
+    };
+    Tree.prototype.levelOrder = function (cb) {
+        var q = new Queue();
+        if (this.root)
+            q.push(this.root);
+        while (!q.isEmpty()) {
+            var node = q.pop();
+            if (node)
+                cb(node.data);
+            if (node === null || node === void 0 ? void 0 : node.left)
+                q.push(node.left);
+            if (node === null || node === void 0 ? void 0 : node.right)
+                q.push(node.right);
+        }
+    };
+    Tree.prototype.inOrder = function (cb) {
+        var cur = this.root;
+        this.inOrderDfs(cur, cb);
+    };
+    Tree.prototype.preOrder = function (cb) {
+        var cur = this.root;
+        this.preOrderDfs(cur, cb);
+    };
+    Tree.prototype.postOrder = function (cb) {
+        var cur = this.root;
+        this.postOrderDfs(cur, cb);
     };
     Tree.prototype.deleteNode = function (prev, cur) {
         // node to be deleted has 2 children
@@ -136,10 +162,47 @@ var Tree = /** @class */ (function () {
         }
         return smallest;
     };
+    Tree.prototype.inOrderDfs = function (cur, cb) {
+        if (!cur)
+            return;
+        this.inOrderDfs(cur.left, cb);
+        cb(cur.data);
+        this.inOrderDfs(cur.right, cb);
+    };
+    Tree.prototype.preOrderDfs = function (cur, cb) {
+        if (!cur)
+            return;
+        cb(cur.data);
+        this.preOrderDfs(cur.left, cb);
+        this.preOrderDfs(cur.right, cb);
+    };
+    Tree.prototype.postOrderDfs = function (cur, cb) {
+        if (!cur)
+            return;
+        this.postOrderDfs(cur.left, cb);
+        this.postOrderDfs(cur.right, cb);
+        cb(cur.data);
+    };
     Tree.prototype.isLeaf = function (node) {
         return !node.left && !node.right;
     };
     return Tree;
+}());
+var Queue = /** @class */ (function () {
+    function Queue() {
+        this.elements = [];
+    }
+    Queue.prototype.push = function (element) {
+        this.elements.push(element);
+    };
+    Queue.prototype.pop = function () {
+        var _a;
+        return (_a = this.elements.shift()) !== null && _a !== void 0 ? _a : null;
+    };
+    Queue.prototype.isEmpty = function () {
+        return this.elements.length == 0;
+    };
+    return Queue;
 }());
 var arr = [1, 2, 3, 4, 5, 6, 7];
 var newTree = new Tree(arr, function (a, b) { return a - b; });
@@ -148,31 +211,44 @@ newTree.insert(9);
 newTree.insert(3.5);
 newTree.insert(4.5);
 newTree.prettyPrint(newTree.root);
-console.log(newTree.delete(9));
+console.log(newTree["delete"](9));
 newTree.prettyPrint(newTree.root);
 newTree.insert(9);
-console.log("deleting 7", newTree.delete(7));
+console.log("deleting 7", newTree["delete"](7));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 5", newTree.delete(5));
+console.log("deleting 5", newTree["delete"](5));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 2", newTree.delete(2));
+console.log("deleting 2", newTree["delete"](2));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 3", newTree.delete(3));
+console.log("deleting 3", newTree["delete"](3));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 9", newTree.delete(9));
+console.log("deleting 9", newTree["delete"](9));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 6", newTree.delete(6));
+console.log("deleting 6", newTree["delete"](6));
 newTree.prettyPrint(newTree.root);
-newTree.delete(1);
-console.log("deleting 2", newTree.delete(2));
+newTree["delete"](1);
+console.log("deleting 2", newTree["delete"](2));
 newTree.prettyPrint(newTree.root);
 console.log("Rebuilding Tree:");
 newTree = new Tree(arr, function (a, b) { return a - b; });
 newTree.prettyPrint(newTree.root);
-console.log("deleting 4", newTree.delete(4));
+var res = [];
+newTree.levelOrder(function (ele) { return res.push(ele); });
+console.log("LEVEL ORDER", res);
+res = [];
+newTree.inOrder(function (ele) { return res.push(ele); });
+console.log("INORDER", res);
+res = [];
+newTree.preOrder(function (ele) { return res.push(ele); });
+console.log("PREORDER", res);
+res = [];
+newTree.postOrder(function (ele) { return res.push(ele); });
+console.log("POSTORDER", res);
+console.log("deleting 4", newTree["delete"](4));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 5", newTree.delete(5));
+console.log("deleting 5", newTree["delete"](5));
 newTree.prettyPrint(newTree.root);
-console.log("deleting 2", newTree.delete(2));
+console.log("deleting 2", newTree["delete"](2));
 newTree.prettyPrint(newTree.root);
 console.log(newTree.find(3));
+newTree.levelOrder(function (ele) { return console.log(ele); });
