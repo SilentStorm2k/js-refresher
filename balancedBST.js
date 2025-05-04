@@ -1,3 +1,5 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var TreeNode = /** @class */ (function () {
     function TreeNode(data, left, right) {
         this.data = data;
@@ -73,6 +75,19 @@ var Tree = /** @class */ (function () {
                 cur = cur.right;
         }
         return false;
+    };
+    Tree.prototype.find = function (value) {
+        var cur = this.root;
+        while (cur && cur.data != value) {
+            if (this.comparator(cur.data, value) > 0)
+                cur = cur.left;
+            else
+                cur = cur.right;
+        }
+        if (cur && cur.data == value)
+            return cur;
+        else
+            return null;
     };
     Tree.prototype.deleteNode = function (prev, cur) {
         // node to be deleted has 2 children
@@ -160,3 +175,4 @@ console.log("deleting 5", newTree.delete(5));
 newTree.prettyPrint(newTree.root);
 console.log("deleting 2", newTree.delete(2));
 newTree.prettyPrint(newTree.root);
+console.log(newTree.find(3));

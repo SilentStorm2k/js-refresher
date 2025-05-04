@@ -60,6 +60,16 @@ class Tree<T> {
 		}
 		return false;
 	}
+	find(value: T) {
+		let cur = this.root;
+		while (cur && cur.data != value) {
+			if (this.comparator(cur.data, value) > 0) cur = cur.left;
+			else cur = cur.right;
+		}
+		if (cur && cur.data == value) return cur;
+		else return null;
+	}
+	levelOrder(cb: (node) => void) {}
 	private deleteNode(prev, cur) {
 		// node to be deleted has 2 children
 		if (cur.right && cur.left)
@@ -126,6 +136,7 @@ class Tree<T> {
 	};
 }
 
+export {};
 const arr = [1, 2, 3, 4, 5, 6, 7];
 let newTree = new Tree(arr, (a, b) => a - b);
 newTree.prettyPrint(newTree.root);
@@ -172,3 +183,5 @@ newTree.prettyPrint(newTree.root);
 
 console.log("deleting 2", newTree.delete(2));
 newTree.prettyPrint(newTree.root);
+
+console.log(newTree.find(3));
