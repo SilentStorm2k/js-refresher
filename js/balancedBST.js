@@ -220,7 +220,7 @@ class Tree {
     isLeaf(node) {
         return !node.left && !node.right;
     }
-    prettyPrint = (node, prefix = "", isLeft = true) => {
+    prettyPrint = (node = this.root ?? null, prefix = "", isLeft = true) => {
         if (node === null) {
             return;
         }
@@ -245,62 +245,6 @@ class Queue {
         return this.elements.length == 0;
     }
 }
-// const arr = [1, 2, 3, 4, 5, 6, 7];
-// let newTree = new Tree(arr, (a, b) => a - b);
-// newTree.prettyPrint(newTree.root);
-// newTree.insert(9);
-// newTree.insert(3.5);
-// newTree.insert(4.5);
-// newTree.prettyPrint(newTree.root);
-// console.log(newTree.delete(9));
-// newTree.prettyPrint(newTree.root);
-// newTree.insert(9);
-// console.log("deleting 7", newTree.delete(7));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 5", newTree.delete(5));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 2", newTree.delete(2));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 3", newTree.delete(3));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 9", newTree.delete(9));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 6", newTree.delete(6));
-// newTree.prettyPrint(newTree.root);
-// newTree.delete(1);
-// console.log("deleting 2", newTree.delete(2));
-// newTree.prettyPrint(newTree.root);
-// console.log("Rebuilding Tree:");
-// newTree = new Tree(arr, (a, b) => a - b);
-// newTree.prettyPrint(newTree.root);
-// let res: number[] = [];
-// newTree.levelOrder((ele) => res.push(ele));
-// console.log("LEVEL ORDER", res);
-// res = [];
-// newTree.inOrder((ele) => res.push(ele));
-// console.log("INORDER", res);
-// res = [];
-// newTree.preOrder((ele) => res.push(ele));
-// console.log("PREORDER", res);
-// res = [];
-// newTree.postOrder((ele) => res.push(ele));
-// console.log("POSTORDER", res);
-// console.log("Height of 4", newTree.height(4));
-// console.log("Height of 5", newTree.height(5));
-// console.log("Height of 2", newTree.height(2));
-// console.log("Height of unknown", newTree.height(99));
-// console.log("deleting 4", newTree.delete(4));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 5", newTree.delete(5));
-// newTree.prettyPrint(newTree.root);
-// console.log("deleting 2", newTree.delete(2));
-// newTree.prettyPrint(newTree.root);
-// console.log("Height of 6", newTree.height(6));
-// console.log("Depth of 6", newTree.depth(6));
-// console.log("Depth of 7", newTree.depth(7));
-// console.log("Depth of 1", newTree.depth(1));
-// console.log(newTree.find(3));
-// newTree.levelOrder((ele) => console.log(ele));
 function test() {
     let seedArray = generateSortedArray(80);
     console.log(seedArray);

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.HashSet = HashSet;
+exports.HashSet = void 0;
 const linkedList_1 = require("./linkedList");
 function HashSet(loadFactor = 0.75) {
     const minCapacity = 16;
@@ -97,6 +97,7 @@ function HashSet(loadFactor = 0.75) {
         print,
     };
 }
+exports.HashSet = HashSet;
 function test() {
     const test = HashSet(); // or HashMap() if using a factory
     test.add("apple");
