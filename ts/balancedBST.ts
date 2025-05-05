@@ -12,14 +12,14 @@ class TreeNode<T> {
 type Comparator<T> = (a: T, b: T) => number;
 
 class Tree<T> {
-	root: TreeNode<T> | null;
-	comparator: Comparator<T>;
+	private root: TreeNode<T> | null;
+	private comparator: Comparator<T>;
 	constructor(arr: T[], comparator: Comparator<T>) {
 		this.root = this.buildTree(arr, 0, arr.length - 1);
 		this.comparator = comparator;
 	}
 
-	buildTree(arr: T[], low, high) {
+	buildTree(arr: T[], low: number, high: number) {
 		if (low > high) return null;
 
 		const mid = Math.floor((low + high) / 2);
@@ -107,7 +107,7 @@ class Tree<T> {
 		if (!cur) return null;
 		return this.getHeight(cur, 0) - 1;
 	}
-	private getHeight(cur, height) {
+	private getHeight(cur: TreeNode<T> | null, height: number): number {
 		if (!cur) return height;
 		return (
 			1 +
@@ -117,30 +117,51 @@ class Tree<T> {
 			)
 		);
 	}
-	private deleteNode(prev, cur) {
+	isBalanced() {
+		return this.isBalancedHelper(this.root);
+	}
+	rebalance() {
+		const sortedValues: T[] = [];
+		this.inOrder((element) => sortedValues.push(element));
+		this.root = this.buildTree(sortedValues, 0, sortedValues.length - 1);
+	}
+	private isBalancedHelper(node: TreeNode<T> | null): boolean {
+		let res = true; // vacuously
+		if (node)
+			res =
+				Math.abs(
+					this.getHeight(node.left, 0) - this.getHeight(node.right, 0)
+				) <= 1 &&
+				this.isBalancedHelper(node.left) &&
+				this.isBalancedHelper(node.right);
+		return res;
+	}
+	private deleteNode(prev: TreeNode<T> | null, cur: TreeNode<T>) {
 		// node to be deleted has 2 children
 		if (cur.right && cur.left)
 			cur.data = this.deleteSmallest(cur, cur.right);
 		// node to be deleted is a leaf node
-		else if (this.isLeaf(cur)) {
+		else if (this.isLeaf(cur) && prev) {
 			if (this.comparator(prev.data, cur.data) < 0) prev.right = null;
 			else prev.left = null;
 		}
 		// node to be deleted has 1 child
 		else {
-			if (cur.left) {
-				if (this.comparator(prev.data, cur.data) < 0)
-					prev.right = cur.left;
-				else prev.left = cur.left;
-			} else {
-				if (this.comparator(prev.data, cur.data) > 0)
-					prev.left = cur.right;
-				else prev.right = cur.right;
+			if (prev) {
+				if (cur.left) {
+					if (this.comparator(prev.data, cur.data) < 0)
+						prev.right = cur.left;
+					else prev.left = cur.left;
+				} else {
+					if (this.comparator(prev.data, cur.data) > 0)
+						prev.left = cur.right;
+					else prev.right = cur.right;
+				}
 			}
 		}
 	}
 
-	private deleteSmallest(prev, cur) {
+	private deleteSmallest(prev: TreeNode<T>, cur: TreeNode<T>) {
 		while (cur.left) {
 			prev = cur;
 			cur = cur.left;
@@ -156,30 +177,34 @@ class Tree<T> {
 		return smallest;
 	}
 
-	private inOrderDfs(cur, cb: (val: T) => void) {
+	private inOrderDfs(cur: TreeNode<T> | null, cb: (val: T) => void) {
 		if (!cur) return;
 		this.inOrderDfs(cur.left, cb);
 		cb(cur.data);
 		this.inOrderDfs(cur.right, cb);
 	}
-	private preOrderDfs(cur, cb: (val: T) => void) {
+	private preOrderDfs(cur: TreeNode<T> | null, cb: (val: T) => void) {
 		if (!cur) return;
 		cb(cur.data);
 		this.preOrderDfs(cur.left, cb);
 		this.preOrderDfs(cur.right, cb);
 	}
-	private postOrderDfs(cur, cb: (val: T) => void) {
+	private postOrderDfs(cur: TreeNode<T> | null, cb: (val: T) => void) {
 		if (!cur) return;
 		this.postOrderDfs(cur.left, cb);
 		this.postOrderDfs(cur.right, cb);
 		cb(cur.data);
 	}
 
-	private isLeaf(node) {
+	private isLeaf(node: TreeNode<T>) {
 		return !node.left && !node.right;
 	}
 
-	prettyPrint = (node, prefix = "", isLeft = true) => {
+	prettyPrint = (
+		node: TreeNode<T> | null = this.root ?? null,
+		prefix = "",
+		isLeft = true
+	) => {
 		if (node === null) {
 			return;
 		}
@@ -215,74 +240,60 @@ class Queue<T> {
 }
 
 export {};
-const arr = [1, 2, 3, 4, 5, 6, 7];
-let newTree = new Tree(arr, (a, b) => a - b);
-newTree.prettyPrint(newTree.root);
-newTree.insert(9);
-newTree.insert(3.5);
-newTree.insert(4.5);
-newTree.prettyPrint(newTree.root);
 
-console.log(newTree.delete(9));
-newTree.prettyPrint(newTree.root);
+function test() {
+	let seedArray = generateSortedArray(80);
+	console.log(seedArray);
+	let bTree = new Tree<number>(seedArray, (a, b) => a - b);
+	console.log("Checking if balanced", bTree.isBalanced());
+	let print: number[] = [];
+	bTree.levelOrder((e) => print.push(e));
+	console.log(print);
+	print = [];
+	bTree.preOrder((e) => print.push(e));
+	console.log(print);
+	print = [];
+	bTree.postOrder((e) => print.push(e));
+	console.log(print);
+	print = [];
+	bTree.inOrder((e) => print.push(e));
+	console.log(print);
 
-newTree.insert(9);
-console.log("deleting 7", newTree.delete(7));
-newTree.prettyPrint(newTree.root);
+	const newElements = generateSortedArray(80, 101, 200);
+	console.log("ADDING NEW ELEMENTS TO UNBALANCE");
+	for (const element of newElements) bTree.insert(element);
 
-console.log("deleting 5", newTree.delete(5));
-newTree.prettyPrint(newTree.root);
+	console.log("Checking if balanced", bTree.isBalanced());
+	console.log("REBALANCING");
+	bTree.rebalance();
+	console.log("Checking if balanced", bTree.isBalanced());
 
-console.log("deleting 2", newTree.delete(2));
-newTree.prettyPrint(newTree.root);
+	print = [];
+	bTree.levelOrder((e) => print.push(e));
+	console.log(print);
+	print = [];
+	bTree.preOrder((e) => print.push(e));
+	console.log(print);
+	print = [];
+	bTree.postOrder((e) => print.push(e));
+	console.log(print);
+	print = [];
+	bTree.inOrder((e) => print.push(e));
+	console.log(print);
+}
 
-console.log("deleting 3", newTree.delete(3));
-newTree.prettyPrint(newTree.root);
+function generateSortedArray(
+	size: number,
+	min: number = 0,
+	max: number = 100
+): number[] {
+	min = Math.ceil(min);
+	max = Math.ceil(max);
+	if (min >= max || max - min < size) throw Error("Invalid size min and max");
+	const set = new Set<number>();
+	while (set.size < size)
+		set.add(Math.floor(Math.random() * (max - min + 1) + min));
+	return [...set].sort((a, b) => a - b);
+}
 
-console.log("deleting 9", newTree.delete(9));
-newTree.prettyPrint(newTree.root);
-
-console.log("deleting 6", newTree.delete(6));
-newTree.prettyPrint(newTree.root);
-
-newTree.delete(1);
-console.log("deleting 2", newTree.delete(2));
-newTree.prettyPrint(newTree.root);
-
-console.log("Rebuilding Tree:");
-newTree = new Tree(arr, (a, b) => a - b);
-newTree.prettyPrint(newTree.root);
-let res: number[] = [];
-newTree.levelOrder((ele) => res.push(ele));
-console.log("LEVEL ORDER", res);
-res = [];
-newTree.inOrder((ele) => res.push(ele));
-console.log("INORDER", res);
-res = [];
-newTree.preOrder((ele) => res.push(ele));
-console.log("PREORDER", res);
-res = [];
-newTree.postOrder((ele) => res.push(ele));
-console.log("POSTORDER", res);
-
-console.log("Height of 4", newTree.height(4));
-console.log("Height of 5", newTree.height(5));
-console.log("Height of 2", newTree.height(2));
-console.log("Height of unknown", newTree.height(99));
-
-console.log("deleting 4", newTree.delete(4));
-newTree.prettyPrint(newTree.root);
-
-console.log("deleting 5", newTree.delete(5));
-newTree.prettyPrint(newTree.root);
-
-console.log("deleting 2", newTree.delete(2));
-newTree.prettyPrint(newTree.root);
-
-console.log("Height of 6", newTree.height(6));
-console.log("Depth of 6", newTree.depth(6));
-console.log("Depth of 7", newTree.depth(7));
-console.log("Depth of 1", newTree.depth(1));
-
-console.log(newTree.find(3));
-newTree.levelOrder((ele) => console.log(ele));
+test();
