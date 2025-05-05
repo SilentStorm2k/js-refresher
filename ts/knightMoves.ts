@@ -10,26 +10,22 @@ function knightMoves(start: [number, number], end: [number, number]): void {
 
 function bfs(start: ChessCoord, end: ChessCoord): ChessCoord[] {
 	const q = new Queue<ChessCoord[]>();
+	const visited = new Set<ChessCoord>();
 	q.push([start]);
+	visited.add(start);
 	while (!q.isEmpty()) {
-		const ele = q.pop();
-		if (ele) {
-			const [cur, ...seen] = ele;
-			if (cur.isEqual(end)) {
-				seen.push(end);
-				return seen;
-			} else {
-				if (seen.some((coord) => coord.isEqual(cur)))
-					// already visited this position
-					continue;
-				else {
-					const nextCoords = cur.nextHorseMoves();
-					seen.push(cur);
-					for (const next of nextCoords) {
-						if (!seen.some((coord) => coord.isEqual(next)))
-							q.push([next, ...seen]);
-					}
-				}
+		const path = q.pop();
+		if (!path) continue;
+
+		const cur = path[path.length - 1];
+
+		if (cur.isEqual(end)) return path;
+
+		for (const next of cur.nextHorseMoves()) {
+			if (!visited.has(next)) {
+				visited.add(next);
+				const newPath = [...path, next];
+				q.push(newPath);
 			}
 		}
 	}
