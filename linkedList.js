@@ -1,64 +1,65 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.LinkedList = void 0;
-var LinkedList = /** @class */ (function () {
-    function LinkedList() {
+class LinkedList {
+    _head;
+    _tail;
+    _size;
+    constructor() {
         this._head = new ListNode();
         this._tail = this._head;
         this._size = 0;
     }
-    LinkedList.prototype.append = function (value) {
-        var cur = this._tail;
+    append(value) {
+        const cur = this._tail;
         this._tail = new ListNode(value);
         cur.next = this._tail;
         this._size += 1;
         if (this._size == 1)
             this._head.next = this._tail;
-    };
-    LinkedList.prototype.prepend = function (value) {
-        var cur = new ListNode(value);
+    }
+    prepend(value) {
+        const cur = new ListNode(value);
         cur.next = this._head.next;
         this._head.next = cur;
         this._size += 1;
         if (this._size == 1)
             this._tail = cur;
-    };
-    LinkedList.prototype.size = function () {
+    }
+    size() {
         return this._size;
-    };
-    LinkedList.prototype.headNode = function () {
+    }
+    headNode() {
         return this._head.next;
-    };
-    LinkedList.prototype.head = function () {
-        var _a, _b;
-        return (_b = (_a = this._head.next) === null || _a === void 0 ? void 0 : _a.value) !== null && _b !== void 0 ? _b : null;
-    };
-    LinkedList.prototype.tail = function () {
-        var _a;
-        return (_a = this._tail.value) !== null && _a !== void 0 ? _a : null;
-    };
-    LinkedList.prototype.at = function (index) {
+    }
+    head() {
+        return this._head.next?.value ?? null;
+    }
+    tail() {
+        return this._tail.value ?? null;
+    }
+    at(index) {
         if (index >= 0 && index < this._size && this._head.next != null) {
-            var cur = this._head.next;
+            let cur = this._head.next;
             while (index > 0 && cur.next != null) {
-                cur = cur === null || cur === void 0 ? void 0 : cur.next;
+                cur = cur?.next;
                 index -= 1;
             }
             return cur.value;
         }
         else
-            console.error("Index ".concat(index, " out of bounds"));
+            console.error(`Index ${index} out of bounds`);
         return null;
-    };
-    LinkedList.prototype.pop = function () {
+    }
+    pop() {
         if (this._size > 0 && this._head.next) {
-            var cur = this._head.next;
-            var retVal = this._tail.value;
+            let cur = this._head.next;
+            const retVal = this._tail.value;
             if (cur == this._tail)
                 cur = this._head;
             else {
                 while (cur.next != null && cur.next != this._tail)
-                    cur = cur === null || cur === void 0 ? void 0 : cur.next;
+                    cur = cur?.next;
                 cur.next = null;
             }
             this._tail = cur;
@@ -67,21 +68,21 @@ var LinkedList = /** @class */ (function () {
             return retVal;
         }
         else
-            console.error("LinkedList already empty");
+            console.error(`LinkedList already empty`);
         return null;
-    };
-    LinkedList.prototype.contains = function (value) {
-        var cur = this._head.next;
+    }
+    contains(value) {
+        let cur = this._head.next;
         while (cur != null) {
             if (cur.value == value)
                 return true;
             cur = cur.next;
         }
         return false;
-    };
-    LinkedList.prototype.find = function (value) {
-        var cur = this._head.next;
-        var index = 0;
+    }
+    find(value) {
+        let cur = this._head.next;
+        let index = 0;
         while (cur != null) {
             if (cur.value == value)
                 return index;
@@ -89,31 +90,30 @@ var LinkedList = /** @class */ (function () {
             index += 1;
         }
         return null;
-    };
-    LinkedList.prototype.toString = function () {
-        var cur = this._head.next;
-        var retStr = "";
+    }
+    toString() {
+        let cur = this._head.next;
+        let retStr = "";
         while (cur != null) {
-            retStr += "( ".concat(cur.value, " ) -> ");
+            retStr += `( ${cur.value} ) -> `;
             cur = cur.next;
         }
         return retStr + "null";
-    };
-    LinkedList.prototype.insertAt = function (value, index) {
-        var _a;
+    }
+    insertAt(value, index) {
         if (index == 0)
             this.prepend(value);
         else if (index == this._size)
             this.append(value);
         else if (index > 0 && index < this._size) {
-            var cur = this._head.next;
-            var curIdx = 0;
+            let cur = this._head.next;
+            let curIdx = 0;
             while (curIdx != index - 1 && cur) {
                 curIdx += 1;
-                cur = cur === null || cur === void 0 ? void 0 : cur.next;
+                cur = cur?.next;
             }
             if (cur) {
-                var newNode = new ListNode(value, (_a = cur === null || cur === void 0 ? void 0 : cur.next) !== null && _a !== void 0 ? _a : undefined);
+                const newNode = new ListNode(value, cur?.next ?? undefined);
                 cur.next = newNode;
                 this._size += 1;
             }
@@ -121,27 +121,26 @@ var LinkedList = /** @class */ (function () {
                 console.error("SOMETHING BAD HAPPENED");
         }
         else
-            console.error("Index ".concat(index, " is invalid for list of size ").concat(this._size));
-    };
-    LinkedList.prototype.removeAt = function (index) {
-        var _a, _b, _c;
+            console.error(`Index ${index} is invalid for list of size ${this._size}`);
+    }
+    removeAt(index) {
         if (this.size() == 1 || index == this.size())
             return this.pop();
         else if (index == 0) {
-            var retVal = this.head();
-            this._head.next = (_b = (_a = this._head.next) === null || _a === void 0 ? void 0 : _a.next) !== null && _b !== void 0 ? _b : null;
+            const retVal = this.head();
+            this._head.next = this._head.next?.next ?? null;
             return retVal;
         }
         else if (index > 0 && index < this._size) {
-            var cur = this._head.next;
-            var curIdx = 0;
+            let cur = this._head.next;
+            let curIdx = 0;
             while (curIdx != index - 1 && cur) {
                 curIdx += 1;
-                cur = cur === null || cur === void 0 ? void 0 : cur.next;
+                cur = cur?.next;
             }
-            if (cur === null || cur === void 0 ? void 0 : cur.next) {
-                var retVal = cur.next.value;
-                cur.next = (_c = cur.next) === null || _c === void 0 ? void 0 : _c.next;
+            if (cur?.next) {
+                const retVal = cur.next.value;
+                cur.next = cur.next?.next;
                 this._size -= 1;
                 return retVal;
             }
@@ -149,59 +148,59 @@ var LinkedList = /** @class */ (function () {
                 console.error("SOMETHING BAD HAPPENED");
         }
         else
-            console.error("Index ".concat(index, " is invalid for list of size ").concat(this._size));
+            console.error(`Index ${index} is invalid for list of size ${this._size}`);
         return this.head();
-    };
-    return LinkedList;
-}());
-exports.LinkedList = LinkedList;
-var ListNode = /** @class */ (function () {
-    function ListNode(value, next) {
-        this.value = value !== null && value !== void 0 ? value : null;
-        this.next = next !== null && next !== void 0 ? next : null;
     }
-    return ListNode;
-}());
+}
+exports.LinkedList = LinkedList;
+class ListNode {
+    next;
+    value;
+    constructor(value, next) {
+        this.value = value ?? null;
+        this.next = next ?? null;
+    }
+}
 // The following tests are written using Large Language Models:
 // Simple assertion functions
 function assertEqual(actual, expected, message) {
     if (actual !== expected) {
-        console.error("\u274C FAIL: ".concat(message, " - Expected: ").concat(expected, ", Got: ").concat(actual));
+        console.error(`❌ FAIL: ${message} - Expected: ${expected}, Got: ${actual}`);
     }
     else {
-        console.log("\u2705 PASS: ".concat(message));
+        console.log(`✅ PASS: ${message}`);
     }
 }
 function assertStrictEqual(actual, expected, message) {
     if (actual !== expected) {
         // Using strict inequality (===) might be better depending on T
-        console.error("\u274C FAIL: ".concat(message, " - Expected: ").concat(expected, " (").concat(typeof expected, "), Got: ").concat(actual, " (").concat(typeof actual, ")"));
+        console.error(`❌ FAIL: ${message} - Expected: ${expected} (${typeof expected}), Got: ${actual} (${typeof actual})`);
     }
     else {
-        console.log("\u2705 PASS: ".concat(message));
+        console.log(`✅ PASS: ${message}`);
     }
 }
 function assertTrue(condition, message) {
     if (!condition) {
-        console.error("\u274C FAIL: ".concat(message, " - Expected condition to be true"));
+        console.error(`❌ FAIL: ${message} - Expected condition to be true`);
     }
     else {
-        console.log("\u2705 PASS: ".concat(message));
+        console.log(`✅ PASS: ${message}`);
     }
 }
 function assertFalse(condition, message) {
     if (condition) {
-        console.error("\u274C FAIL: ".concat(message, " - Expected condition to be false"));
+        console.error(`❌ FAIL: ${message} - Expected condition to be false`);
     }
     else {
-        console.log("\u2705 PASS: ".concat(message));
+        console.log(`✅ PASS: ${message}`);
     }
 }
 function tests() {
     // ... (ListNode and LinkedList classes above) ...
     console.log("--- Starting LinkedList Tests ---");
     // Test Case 1: Basic Appending and Size
-    var list = new LinkedList();
+    const list = new LinkedList();
     list.append("dog");
     list.append("cat");
     list.append("parrot");
@@ -262,7 +261,7 @@ function tests() {
     assertEqual(list.toString(), "( bug ) -> ( dog ) -> ( cat ) -> ( parrot ) -> ( hamster ) -> ( snake ) -> ( turtle ) -> null", "String after pop"); // Wait, something is wrong here. Pop should remove the tail, which is 'turtle'. Let's fix the list state for subsequent pops.
     // Reset the list or manage state carefully for pops
     // Let's create a new list for pop tests to keep it clean
-    var popList = new LinkedList();
+    const popList = new LinkedList();
     popList.append("a");
     popList.append("b");
     popList.append("c"); // List: a -> b -> c
@@ -286,7 +285,7 @@ function tests() {
     assertEqual(popList.size(), 0, "Pop list size after popping from empty");
     // Test Case 8: Testing insertAt(value, index)
     console.log("\n--- Testing insertAt(value, index) ---");
-    var insertList = new LinkedList();
+    const insertList = new LinkedList();
     // Insert at index 0 (empty list)
     insertList.insertAt("first", 0); // List: first
     assertEqual(insertList.size(), 1, "insertAt(0) on empty size");
@@ -318,11 +317,11 @@ function tests() {
     // We can't easily check for console.error without a framework here, but we can check that
     // the list state (size and content) doesn't change unexpectedly for invalid indices.
     console.log("\n--- Testing insertAt(value, index) invalid indices ---");
-    var insertInvalidList = new LinkedList();
+    const insertInvalidList = new LinkedList();
     insertInvalidList.append("a");
     insertInvalidList.append("b"); // List: a -> b
-    var initialSize = insertInvalidList.size();
-    var initialString = insertInvalidList.toString();
+    const initialSize = insertInvalidList.size();
+    const initialString = insertInvalidList.toString();
     insertInvalidList.insertAt("invalid", -1); // Invalid negative index
     assertEqual(insertInvalidList.size(), initialSize, "insertAt(-1) size unchanged");
     assertEqual(insertInvalidList.toString(), initialString, "insertAt(-1) string unchanged");
@@ -336,7 +335,7 @@ function tests() {
     // When you implement removeAt, add tests here following the pattern above.
     // For example:
     console.log("\n--- Testing removeAt(index) ---");
-    var removeList = new LinkedList();
+    const removeList = new LinkedList();
     removeList.append("x");
     removeList.append("y");
     removeList.append("z"); // List: x -> y -> z
