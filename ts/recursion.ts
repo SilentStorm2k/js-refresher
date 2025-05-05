@@ -13,7 +13,7 @@ function fibs(num: number): number[] {
 
 function fibsRec(num: number): number[] {
 	const arr: number[] = [];
-	function fibsRecHelper(a, b) {
+	function fibsRecHelper(a: number, b: number) {
 		if (num == 0) return;
 		else {
 			arr.push(a);
